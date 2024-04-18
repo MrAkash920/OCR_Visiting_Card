@@ -5,9 +5,6 @@ from PIL import Image
 import re
 
 app = Flask(__name__)
-@app.route("/")
-def start():
-    return "The Server is running"
 
 @app.route('/')
 def index():
