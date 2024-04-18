@@ -5,9 +5,15 @@ from PIL import Image
 import re
 
 app = Flask(__name__)
+@app.route("/")
+def start():
+    return "The Server is running"
+
 @app.route('/')
 def index():
     return render_template('upload.html')
+
+
 
 # Create API endpoint
 @app.route('/upload', methods=['POST'])
