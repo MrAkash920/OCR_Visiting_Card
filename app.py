@@ -61,8 +61,10 @@ def allowed_file(filename):
 
 #Functions to extract information using regular expression
 
+import re
+
 def extract_name(text):
-    name_pattern = re.compile(r'Name: (.+)', re.IGNORECASE)
+    name_pattern = re.compile(r'(?:Name|Contact|Person):\s*([^\n,]+)', re.IGNORECASE)
     match = name_pattern.search(text)
     if match:
         return match.group(1).strip()
@@ -70,7 +72,7 @@ def extract_name(text):
         return None
 
 def extract_company_name(text):
-    company_pattern = re.compile(r'Company: (.+)', re.IGNORECASE)
+    company_pattern = re.compile(r'(?:Company|Corporation|Corp|Inc|LLC):\s*([^\n,]+)', re.IGNORECASE)
     match = company_pattern.search(text)
     if match:
         return match.group(1).strip()
@@ -78,7 +80,7 @@ def extract_company_name(text):
         return None
 
 def extract_designation(text):
-    designation_pattern = re.compile(r'Designation: (.+)', re.IGNORECASE)
+    designation_pattern = re.compile(r'(?:Position|Role|Job|Title|Designation):\s*([^\n,]+)', re.IGNORECASE)
     match = designation_pattern.search(text)
     if match:
         return match.group(1).strip()
@@ -96,28 +98,24 @@ def extract_email(text):
 def extract_contact_numbers(text):
     phone_pattern = re.compile(r'(\+?\d{1,2}\s?)?(\(?\d{3}\)?[\s.-]?)?(\d{3}[\s.-]?\d{4})')
     contact_numbers = phone_pattern.findall(text)
-    numbers = [number[0] + number[1] + number[2] for number in contact_numbers]
+    numbers = [''.join(number) for number in contact_numbers]
     return ', '.join(numbers)
 
 def extract_address(text):
-    address_pattern = re.compile(r'Address: (.+)', re.IGNORECASE)
+    address_pattern = re.compile(r'(?:Address|Location):\s*([^\n]+)', re.IGNORECASE)
     match = address_pattern.search(text)
     if match:
         return match.group(1).strip()
     else:
         return None
 
-import re
-
 def extract_website(text):
-    website_pattern = re.compile(r'\b(www\.)?([a-zA-Z0-9-]+\.){1,2}[a-zA-Z]{2,}(/\S*)?\b')
+    website_pattern = re.compile(r'\b(https?://)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(/\S*)?\b')
     match = website_pattern.search(text)
-    
     if match:
         return match.group()
     else:
         return None
-
 
 if __name__ == '__main__':
      app.run(debug=True)
