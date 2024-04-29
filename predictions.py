@@ -23,7 +23,7 @@ def proper(text):
 
     
     return str(removepun)
-#class
+
 class new():
     def __init__(self):
         self.id = 0
@@ -39,7 +39,6 @@ class new():
         
 ob = new()
 
-#re
 def clean(text,label):
     if label == 'PHONE':
         text = text.lower()
@@ -69,9 +68,7 @@ model1 = spacy.load('output/model-best/')
 
 def getPredictions(image):
     pydata = pytesseract.image_to_data(image)
-    #print(pydata)
     data = list(map(lambda a:a.split("\t") , pydata.split('\n')))
-    #data
     data_1 = pd.DataFrame(data[1:] , columns=data[0])
     data_1.dropna(inplace=True)
     data_1['text'] = data_1['text'].apply(proper)
@@ -79,60 +76,28 @@ def getPredictions(image):
     content = " ".join([i for i in df['text']])
     print(content)
     sol = model1(content)
-    #displacy.render(sol , style='ent')
     soljson = sol.to_json()
-
     soljson.keys()
-
     sol_text = soljson['text']
-
     soljson['ents']
-
-
     soljson['tokens']
-
     df_tokens = pd.DataFrame(soljson['tokens'])
-
     df_tokens['token'] = df_tokens[['start','end']].apply(
         lambda x:sol_text[x[0]:x[1]] , axis = 1)
-
     k = pd.DataFrame(soljson['ents'])[['start','label']]
     df_tokens = pd.merge(df_tokens,k,how='left',on='start')
-
-
-
     df_tokens.fillna('O',inplace=True)
     df['end'] = df['text'].apply(lambda x: len(x)+1).cumsum() - 1 
     df['start'] = df[['text','end']].apply(lambda x: x[1] - len(x[0]),axis=1)
-
     df_c = pd.merge(df,df_tokens[['start','token','label']],how='inner',on='start')
-
     d = df_c.query("label != 'O' ")
-  
-
     d['label'] = d['label'].apply(lambda x: x[2:])
-
     d['group'] = d['label'].apply(ob.e)
-
-
-    # In[172]:
-
-
     d[['left','top','width','height']] = d[['left','top','width','height']].astype(int)
     d['right'] = d['left'] + d['width']
     d['bottom'] = d['top'] + d['height']
-
-
-    # In[173]:
-
-
     qq = ['left','top','right','bottom','label','token','group']
     x = d[qq].groupby(by='group')
-
-
-    # In[174]:
-
-
     img_tagging = x.agg({
 
         'left':min,
@@ -148,8 +113,7 @@ def getPredictions(image):
     img_r = image.copy()
     for l, r, t, b, label, token in img_tagging.values:
         cv2.rectangle(img_r, (l, t), (r, b), (0, 255, 0), 2)
-    
-    # Explicitly convert label to string
+
     label_str = str(label)
     
     cv2.putText(img_r, label_str, (l, t), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 255), 2)
@@ -166,23 +130,17 @@ def getPredictions(image):
 
         text = clean(tok,label_tag)
 
-
-
         if previous != label_tag:
             entities[label_tag].append(text)
-
         else:
             if bio_tag == 'B':
                 entities[label_tag].append(text)
-
             else:
                 if label_tag in ('NAME','ORG','DES'):
                     entities[label_tag][-1] = entities[label_tag][-1]+" "+text
-
                 else:
                     entities[label_tag][-1] = entities[label_tag][-1]+text
 
         previous = label_tag
 
-    #print(entities)
     return img_r , entities
