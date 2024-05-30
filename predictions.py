@@ -53,18 +53,16 @@ def clean(text,label):
         text = re.sub(r'[^A-Za-z0-9{} ]'.format(a_s_c),'',text)
     elif label in ("NAME","DES"):
         text = text.lower()
-       # a_s_c = '@_.-'
         text = re.sub(r'[^a-z]','',text)
         text = text.title()
     elif label == "ORG":
         text = text.lower()
-       # a_s_c = '@_.-'
         text = re.sub(r'[^a-z0-9]','',text)
         text = text.title()
     return text
 
 
-model1 = spacy.load('output/model-best/')
+model1 = spacy.load('results/')
 
 def getPredictions(image):
     pydata = pytesseract.image_to_data(image)

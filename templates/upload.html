@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Business Card</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Visiting Card</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Upload Business Card</h2>
-    <form action="http://localhost:5000/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" id="file">
-        <input type="submit" value="Upload">
-    </form>
+
+<div class="container">
+  <div class="card">
+    <h3>Upload Your Visiting Card</h3>
+    <div class="drop_box">
+      <header>
+        <h4>Select File here</h4>
+      </header>
+      <p>Files Supported: JPEG, JPG, PNG</p>
+      <form action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".jpeg,.jpg,.png" id="fileID">
+        <button type="submit" class="btn">Upload File</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
